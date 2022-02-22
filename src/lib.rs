@@ -1,4 +1,7 @@
-use piet_common::{kurbo, Color, Piet, RenderContext};
+use piet_common::{
+    kurbo, Color, FontFamily, FontStyle, FontWeight, Piet, RenderContext, Text, TextAttribute,
+    TextLayoutBuilder, TextAlignment,
+};
 use plotters_backend::{BackendColor, BackendCoord, DrawingBackend, DrawingErrorKind};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -77,18 +80,13 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         let upper_left = plotters_point_to_kurbo(upper_left);
         let bottom_right = plotters_point_to_kurbo(bottom_right);
         let color = plotters_color_to_piet(&style.color());
+        let rect = kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y);
 
         if fill {
-            self.render_ctx.fill(
-                kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y),
-                &color,
-            );
+            self.render_ctx.fill(rect, &color);
         } else {
-            self.render_ctx.stroke(
-                kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y),
-                &color,
-                style.stroke_width() as f64,
-            );
+            self.render_ctx
+                .stroke(rect, &color, style.stroke_width() as f64);
         }
         Ok(())
     }
@@ -121,7 +119,17 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         style: &S,
         fill: bool,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        todo!();
+        let center = plotters_point_to_kurbo(center);
+        let color = plotters_color_to_piet(&style.color());
+        let circle = kurbo::Circle::new(center, radius as f64);
+
+        if fill {
+            self.render_ctx.fill(circle, &color);
+        } else {
+            self.render_ctx
+                .stroke(circle, &color, style.stroke_width() as f64);
+        }
+        Ok(())
     }
 
     fn fill_polygon<S: plotters_backend::BackendStyle, I: IntoIterator<Item = BackendCoord>>(
@@ -129,16 +137,67 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         vert: I,
         style: &S,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        todo!();
+        if style.color().alpha == 0.0 {
+            return Ok(());
+        }
+
+        let path: Vec<kurbo::PathEl> = vert
+            .into_iter()
+            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo(p)))
+            .chain(std::iter::once(kurbo::PathEl::ClosePath))
+            .collect();
+        self.render_ctx
+            .fill(&*path, &plotters_color_to_piet(&style.color()));
+        Ok(())
     }
 
-    fn blit_bitmap<'c>(
+    fn draw_text<TStyle: plotters_backend::BackendTextStyle>(
         &mut self,
+        text: &str,
+        style: &TStyle,
         pos: BackendCoord,
-        (iw, ih): (u32, u32),
-        src: &'c [u8],
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        todo!();
+        let pos = plotters_point_to_kurbo(pos);
+        let color = plotters_color_to_piet(&style.color());
+
+        let text_api = self.render_ctx.text();
+        let font_family = match style.family() {
+            plotters_backend::FontFamily::Serif => Ok(FontFamily::SERIF),
+            plotters_backend::FontFamily::SansSerif => Ok(FontFamily::SANS_SERIF),
+            plotters_backend::FontFamily::Monospace => Ok(FontFamily::MONOSPACE),
+            plotters_backend::FontFamily::Name(name) => text_api
+                .font_family(name)
+                .ok_or(piet_common::Error::MissingFont),
+        };
+
+        let (font_style, weight) = match style.style() {
+            plotters_backend::FontStyle::Normal => (FontStyle::Regular, FontWeight::REGULAR),
+            plotters_backend::FontStyle::Oblique => (FontStyle::Italic, FontWeight::REGULAR),
+            plotters_backend::FontStyle::Italic => (FontStyle::Italic, FontWeight::REGULAR),
+            plotters_backend::FontStyle::Bold => (FontStyle::Regular, FontWeight::BOLD),
+        };
+
+        let alignment = match style.anchor().h_pos {
+            plotters_backend::text_anchor::HPos::Left => TextAlignment::Start,
+            plotters_backend::text_anchor::HPos::Right => TextAlignment::End,
+            plotters_backend::text_anchor::HPos::Center => TextAlignment::Center,
+        };
+
+        let layout = text_api
+            .new_text_layout(String::from(text))
+            .font(font_family.unwrap(), style.size())
+            .text_color(color)
+            .alignment(alignment)
+            .default_attribute(TextAttribute::Style(font_style))
+            .default_attribute(TextAttribute::Weight(weight))
+            .build()
+            .unwrap();
+
+        // todo: style.anchor().v_pos
+        // todo: style.transform()
+
+        self.render_ctx.draw_text(&layout, pos);
+        Ok(())
     }
 }
 
