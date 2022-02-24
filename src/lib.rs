@@ -1,7 +1,4 @@
-use piet_common::{
-    kurbo, Color, FontFamily, FontStyle, FontWeight, Piet, RenderContext, Text, TextAttribute,
-    TextLayoutBuilder, TextAlignment,
-};
+use piet_common::{kurbo, Color, Piet, RenderContext};
 use plotters_backend::{BackendColor, BackendCoord, DrawingBackend, DrawingErrorKind};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -28,7 +25,6 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
     }
 
     fn ensure_prepared(&mut self) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        println!("ensure_prepared");
         Ok(())
     }
 
@@ -151,54 +147,57 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         Ok(())
     }
 
-    fn draw_text<TStyle: plotters_backend::BackendTextStyle>(
-        &mut self,
-        text: &str,
-        style: &TStyle,
-        pos: BackendCoord,
-    ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        let pos = plotters_point_to_kurbo(pos);
-        let color = plotters_color_to_piet(&style.color());
+    // For now we use the default text drawing provided by plotters. This is definitely slower,
+    // but at least we don't have to worry about matching the font size and offset which turns
+    // out to be trickier than expected.
+    // fn draw_text<TStyle: plotters_backend::BackendTextStyle>(
+    //     &mut self,
+    //     text: &str,
+    //     style: &TStyle,
+    //     pos: BackendCoord,
+    // ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
+    //     let pos = plotters_point_to_kurbo(pos);
+    //     let color = plotters_color_to_piet(&style.color());
 
-        let text_api = self.render_ctx.text();
-        let font_family = match style.family() {
-            plotters_backend::FontFamily::Serif => Ok(FontFamily::SERIF),
-            plotters_backend::FontFamily::SansSerif => Ok(FontFamily::SANS_SERIF),
-            plotters_backend::FontFamily::Monospace => Ok(FontFamily::MONOSPACE),
-            plotters_backend::FontFamily::Name(name) => text_api
-                .font_family(name)
-                .ok_or(piet_common::Error::MissingFont),
-        };
+    //     let text_api = self.render_ctx.text();
+    //     let font_family = match style.family() {
+    //         plotters_backend::FontFamily::Serif => Ok(FontFamily::SERIF),
+    //         plotters_backend::FontFamily::SansSerif => Ok(FontFamily::SANS_SERIF),
+    //         plotters_backend::FontFamily::Monospace => Ok(FontFamily::MONOSPACE),
+    //         plotters_backend::FontFamily::Name(name) => text_api
+    //             .font_family(name)
+    //             .ok_or(piet_common::Error::MissingFont),
+    //     };
 
-        let (font_style, weight) = match style.style() {
-            plotters_backend::FontStyle::Normal => (FontStyle::Regular, FontWeight::REGULAR),
-            plotters_backend::FontStyle::Oblique => (FontStyle::Italic, FontWeight::REGULAR),
-            plotters_backend::FontStyle::Italic => (FontStyle::Italic, FontWeight::REGULAR),
-            plotters_backend::FontStyle::Bold => (FontStyle::Regular, FontWeight::BOLD),
-        };
+    //     let (font_style, weight) = match style.style() {
+    //         plotters_backend::FontStyle::Normal => (FontStyle::Regular, FontWeight::REGULAR),
+    //         plotters_backend::FontStyle::Oblique => (FontStyle::Italic, FontWeight::REGULAR),
+    //         plotters_backend::FontStyle::Italic => (FontStyle::Italic, FontWeight::REGULAR),
+    //         plotters_backend::FontStyle::Bold => (FontStyle::Regular, FontWeight::BOLD),
+    //     };
 
-        let alignment = match style.anchor().h_pos {
-            plotters_backend::text_anchor::HPos::Left => TextAlignment::Start,
-            plotters_backend::text_anchor::HPos::Right => TextAlignment::End,
-            plotters_backend::text_anchor::HPos::Center => TextAlignment::Center,
-        };
+    //     let alignment = match style.anchor().h_pos {
+    //         plotters_backend::text_anchor::HPos::Left => TextAlignment::Start,
+    //         plotters_backend::text_anchor::HPos::Right => TextAlignment::End,
+    //         plotters_backend::text_anchor::HPos::Center => TextAlignment::Center,
+    //     };
 
-        let layout = text_api
-            .new_text_layout(String::from(text))
-            .font(font_family.unwrap(), style.size())
-            .text_color(color)
-            .alignment(alignment)
-            .default_attribute(TextAttribute::Style(font_style))
-            .default_attribute(TextAttribute::Weight(weight))
-            .build()
-            .unwrap();
+    //     let layout = text_api
+    //         .new_text_layout(String::from(text))
+    //         .font(font_family.unwrap(), style.size())
+    //         .text_color(color)
+    //         .alignment(alignment)
+    //         .default_attribute(TextAttribute::Style(font_style))
+    //         .default_attribute(TextAttribute::Weight(weight))
+    //         .build()
+    //         .unwrap();
 
-        // todo: style.anchor().v_pos
-        // todo: style.transform()
+    //     // todo: style.anchor().v_pos
+    //     // todo: style.transform()
 
-        self.render_ctx.draw_text(&layout, pos);
-        Ok(())
-    }
+    //     self.render_ctx.draw_text(&layout, pos);
+    //     Ok(())
+    // }
 }
 
 fn plotters_color_to_piet(col: &BackendColor) -> piet_common::Color {
