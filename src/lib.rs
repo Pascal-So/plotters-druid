@@ -1,4 +1,4 @@
-use piet_common::{kurbo, Color, Piet, RenderContext};
+use piet_common::{kurbo, Color, LineCap, Piet, RenderContext, StrokeStyle};
 use plotters_backend::{BackendColor, BackendCoord, DrawingBackend, DrawingErrorKind};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -55,13 +55,14 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         to: BackendCoord,
         style: &S,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        let from = plotters_point_to_kurbo(from);
-        let to = plotters_point_to_kurbo(to);
+        let from = plotters_point_to_kurbo_mid(from);
+        let to = plotters_point_to_kurbo_mid(to);
 
-        self.render_ctx.stroke(
+        self.render_ctx.stroke_styled(
             kurbo::Line::new(from, to),
             &plotters_color_to_piet(&style.color()),
             style.stroke_width() as f64,
+            &STROKE_STYLE_SQUARE_CAP,
         );
         Ok(())
     }
@@ -73,8 +74,10 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         style: &S,
         fill: bool,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        let upper_left = plotters_point_to_kurbo(upper_left);
-        let bottom_right = plotters_point_to_kurbo(bottom_right);
+        let upper_left = plotters_point_to_kurbo_corner(upper_left);
+        let mut bottom_right = plotters_point_to_kurbo_corner(bottom_right);
+        bottom_right.x += 1.;
+        bottom_right.y += 1.;
         let color = plotters_color_to_piet(&style.color());
         let rect = kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y);
 
@@ -98,12 +101,14 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
 
         let path: Vec<kurbo::PathEl> = path
             .into_iter()
-            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo(p)))
+            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo_mid(p)))
             .collect();
-        self.render_ctx.stroke(
+
+        self.render_ctx.stroke_styled(
             &*path,
             &plotters_color_to_piet(&style.color()),
             style.stroke_width() as f64,
+            &STROKE_STYLE_SQUARE_CAP,
         );
         Ok(())
     }
@@ -115,7 +120,7 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         style: &S,
         fill: bool,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        let center = plotters_point_to_kurbo(center);
+        let center = plotters_point_to_kurbo_mid(center);
         let color = plotters_color_to_piet(&style.color());
         let circle = kurbo::Circle::new(center, radius as f64);
 
@@ -139,7 +144,7 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
 
         let path: Vec<kurbo::PathEl> = vert
             .into_iter()
-            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo(p)))
+            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo_mid(p)))
             .chain(std::iter::once(kurbo::PathEl::ClosePath))
             .collect();
         self.render_ctx
@@ -204,9 +209,23 @@ fn plotters_color_to_piet(col: &BackendColor) -> piet_common::Color {
     Color::rgba8(col.rgb.0, col.rgb.1, col.rgb.2, (col.alpha * 256.) as u8)
 }
 
-fn plotters_point_to_kurbo((x, y): BackendCoord) -> kurbo::Point {
+fn plotters_point_to_kurbo_mid((x, y): BackendCoord) -> kurbo::Point {
     kurbo::Point {
         x: x as f64 + 0.5,
         y: y as f64 + 0.5,
     }
 }
+
+fn plotters_point_to_kurbo_corner((x, y): BackendCoord) -> kurbo::Point {
+    kurbo::Point {
+        x: x as f64,
+        y: y as f64,
+    }
+}
+
+const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle {
+    line_join: None,
+    line_cap: Some(LineCap::Square),
+    dash: None,
+    miter_limit: None,
+};
