@@ -29,7 +29,6 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
     }
 
     fn present(&mut self) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        println!("present");
         self.render_ctx
             .finish()
             .map_err(|_| DrawingErrorKind::DrawingError(Error {}))
@@ -74,19 +73,25 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
         style: &S,
         fill: bool,
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
-        let upper_left = plotters_point_to_kurbo_corner(upper_left);
-        let mut bottom_right = plotters_point_to_kurbo_corner(bottom_right);
-        bottom_right.x += 1.;
-        bottom_right.y += 1.;
         let color = plotters_color_to_piet(&style.color());
-        let rect = kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y);
 
         if fill {
+            let upper_left = plotters_point_to_kurbo_corner(upper_left);
+            let mut bottom_right = plotters_point_to_kurbo_corner(bottom_right);
+            bottom_right.x += 1.;
+            bottom_right.y += 1.;
+            let rect = kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y);
+
             self.render_ctx.fill(rect, &color);
         } else {
+            let upper_left = plotters_point_to_kurbo_mid(upper_left);
+            let bottom_right = plotters_point_to_kurbo_mid(bottom_right);
+            let rect = kurbo::Rect::new(upper_left.x, upper_left.y, bottom_right.x, bottom_right.y);
+
             self.render_ctx
                 .stroke(rect, &color, style.stroke_width() as f64);
         }
+
         Ok(())
     }
 
