@@ -1,6 +1,5 @@
 [package]
 name = "plotters-piet"
-version = "0.1.0"
 edition = "2021"
 authors = ["Pascal Sommer"]
 license = "MIT OR Apache-2.0"
@@ -10,6 +9,11 @@ keywords = ["visualization", "plotters", "piet", "plot"]
 categories = ["visualization"]
 readme = "Readme.md"
 
+# According to Plotters convention the major and minor version of all backends
+# should follow the plotters-backend version.
+# See https://docs.rs/plotters-backend/latest/plotters_backend/#compatibility-note
+version = "0.3.0"
+
 [dependencies]
 piet-common = {version = ">= 0.3, < 0.6", features = ["png"]}
-plotters-backend = "0.3.2"
+plotters-backend = "^0.3"
