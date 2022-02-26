@@ -1,0 +1,19 @@
+[workspace]
+members = ["plotters-piet"]
+
+[package]
+name = "plotters-druid"
+version = "0.1.0"
+edition = "2021"
+authors = ["Pascal Sommer"]
+license = "MIT OR Apache-2.0"
+description = "Use Plottters as a Druid Widget"
+repository = "https://github.com/pascal-so/plotters-piet"
+keywords = ["visualization", "plotters", "druid", "plot", "widget"]
+categories = ["visualization"]
+readme = "Readme.md"
+
+[dependencies]
+druid = "0.7.0"
+plotters-piet = {version = "0.3.*", path = "plotters-piet"}
+plotters = "^0.3"
