@@ -2,6 +2,12 @@
 
 Use [Plotters](https://crates.io/crates/plotters) to draw plots in [Druid](https://crates.io/crates/druid).
 
+![recording of interactive example](https://raw.githubusercontent.com/Pascal-So/plotters-druid/main/examples/plotters-druid-interactive-example.gif)
+
+All the features of plotters should just work. Additionally, transparency is also supportet, i.e. you don't
+have to fill the background with a solid colour as is usually done in plotters examples, the background can
+instead just be whatever background colour is given through druid.
+
 Note that this is not directly a plotters backend in the sense described in
 [plotters_backend](https://docs.rs/plotters-backend/latest/plotters_backend/), instead this uses
 the plotters-piet backend and wraps it in a struct that implements [`druid::Widget`].
@@ -33,6 +39,19 @@ fn build_plot_widget() -> impl Widget<AppState> {
 let main_window = WindowDesc::new(build_plot_widget);
 # }
 ```
+
+# Limitations
+
+It's currently not possible to propagate errors that might be returned from the plotters API. Right now
+this means you'll probably have to use `.unwrap()` a lot in the closure that you pass to [`Plot::new`],
+or alternatively just log it and shrug.
+
+The possible errors in there mostly come from the drawing backend, e.g. cairo / direct2d / whatever piet
+uses on your platform. Just directly propagating these in the widget's draw function doesn't really make
+sense because it's not clear what druid is supposed to do with these errors. Ideally we'd probably change
+something in the data to notify the rest of the application of the error. If anyone has a good suggestion
+for a possible API feel free to open an issue.
+
 */
 
 use druid::{Data, Widget};
