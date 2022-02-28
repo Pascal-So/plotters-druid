@@ -2,6 +2,9 @@
 
 A [Piet](https://crates.io/crates/piet) backend for [Plotters](https://crates.io/crates/plotters). This lets you draw plots on a Piet render context.
 
+Currently the piet dependency is at 0.3 because that's what druid depends on. The code is *almost* compatible with
+piet 0.4 and 0.5, required changes are listed in comments in the code.
+
 ## Example
 
 Note that so far this has only been tested with piet-cairo.
