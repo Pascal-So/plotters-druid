@@ -1,3 +1,7 @@
+/*!
+A [Piet](https://crates.io/crates/piet) backend for [Plotters](https://crates.io/crates/plotters). This lets you draw plots on a Piet render context.
+*/
+
 use piet_common::{kurbo, Color, LineCap, Piet, RenderContext, StrokeStyle};
 use plotters_backend::{BackendColor, BackendCoord, DrawingBackend, DrawingErrorKind};
 
@@ -12,6 +16,9 @@ impl std::fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
+/// The piet backend.
+///
+/// Note that the size of the piet context has to be specified here.
 pub struct PietBackend<'a, 'b> {
     pub size: (u32, u32),
     pub render_ctx: &'a mut Piet<'b>,
