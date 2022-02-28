@@ -24,6 +24,15 @@ pub struct PietBackend<'a, 'b> {
     pub render_ctx: &'a mut Piet<'b>,
 }
 
+impl<'a, 'b> std::fmt::Debug for PietBackend<'a, 'b> {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+        fmt.debug_struct("PietBackend")
+           .field("size", &self.size)
+           .field("render_ctx", &"(not printable)")
+           .finish()
+    }
+}
+
 impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
     type ErrorType = Error;
 
@@ -246,3 +255,32 @@ const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle {
 // the STROKE_STYLE_SQUARE_CAP definition for this, the rest
 // should already be compatible.
 // const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle::new().line_cap(LineCap::Square);
+
+#[cfg(test)]
+mod tests {
+    use crate::PietBackend;
+    use plotters::prelude::*;
+
+    #[test]
+    fn fill_root_white() {
+        let width = 3;
+        let height = 2;
+
+        let mut device = piet_common::Device::new().unwrap();
+        let mut bitmap = device.bitmap_target(width, height, 1.0).unwrap();
+        let mut render_ctx = bitmap.render_context();
+
+        let piet_backend = PietBackend {
+            size: (width as u32, height as u32),
+            render_ctx: &mut render_ctx,
+        };
+
+        let root = piet_backend.into_drawing_area();
+        root.fill(&WHITE).unwrap();
+
+        let mut buf = [0; 6 * 4];
+        bitmap.copy_raw_pixels(piet_common::ImageFormat::RgbaPremul, &mut buf).unwrap();
+
+        assert_eq!(buf, [255; 6 * 4]);
+    }
+}

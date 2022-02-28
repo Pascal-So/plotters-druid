@@ -17,3 +17,6 @@ version = "0.3.0"
 [dependencies]
 piet-common = "0.3"
 plotters-backend = "^0.3"
+
+[dev-dependencies]
+plotters = "^0.3"
