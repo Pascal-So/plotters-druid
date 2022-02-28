@@ -3,30 +3,13 @@
 A [Piet](https://crates.io/crates/piet) backend for [Plotters](https://crates.io/crates/plotters). This lets you draw plots on a Piet render context.
 
 Currently the piet dependency is at 0.3 because that's what druid depends on. The code is *almost* compatible with
-piet 0.4 and 0.5, required changes are listed in comments in the code.
+piet 0.4 and 0.5, required changes are listed in comments in the code. The main purpose of this crate is to serve
+as a building block for [plotters-druid](https://github.com/Pascal-So/plotters-druid) and therefore compatibility
+with the current druid version takes priority over tracking the latest piet version.
 
-## Example
+Note that so far this has only been tested with piet-cairo and piet-direct2d.
 
-Note that so far this has only been tested with piet-cairo.
-
-```rust
-let width = 1920;
-let height = 1080;
-
-let mut device = Device::new().unwrap();
-let mut bitmap = device.bitmap_target(width, height, 1.0).unwrap();
-let mut render_ctx = bitmap.render_context();
-
-let piet_backend = PietBackend {
-    size: (width as u32, height as u32),
-    render_ctx: &mut render_ctx,
-};
-
-let root = piet_backend.into_drawing_area();
-do_some_plotters_stuff(&root);
-
-bitmap.save_to_file("plot.png").unwrap();
-```
+Examples can be found in the [examples directory](https://github.com/Pascal-So/plotters-druid/tree/main/plotters-piet/examples).
 
 ## License
 

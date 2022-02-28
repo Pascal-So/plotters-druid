@@ -27,9 +27,9 @@ pub struct PietBackend<'a, 'b> {
 impl<'a, 'b> std::fmt::Debug for PietBackend<'a, 'b> {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         fmt.debug_struct("PietBackend")
-           .field("size", &self.size)
-           .field("render_ctx", &"(not printable)")
-           .finish()
+            .field("size", &self.size)
+            .field("render_ctx", &"(not printable)")
+            .finish()
     }
 }
 
@@ -120,10 +120,7 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
             return Ok(());
         }
 
-        let path: Vec<kurbo::PathEl> = path
-            .into_iter()
-            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo_mid(p)))
-            .collect();
+        let path: Vec<kurbo::PathEl> = plotters_path_to_kurbo(path).collect();
 
         self.render_ctx.stroke_styled(
             &*path,
@@ -163,9 +160,7 @@ impl<'a, 'b> DrawingBackend for PietBackend<'a, 'b> {
             return Ok(());
         }
 
-        let path: Vec<kurbo::PathEl> = vert
-            .into_iter()
-            .map(|p| kurbo::PathEl::LineTo(plotters_point_to_kurbo_mid(p)))
+        let path: Vec<kurbo::PathEl> = plotters_path_to_kurbo(vert)
             .chain(std::iter::once(kurbo::PathEl::ClosePath))
             .collect();
         self.render_ctx
@@ -244,6 +239,51 @@ fn plotters_point_to_kurbo_corner((x, y): BackendCoord) -> kurbo::Point {
     }
 }
 
+/// This is basically just an iterator map that applies a different function on
+/// the first item as on the later items.
+/// We need this because the piet direct2d backend doesn't like it if a path
+/// consists entirely of `LineTo` entries, it requires the first entry to be
+/// a `MoveTo` entry.
+struct PlottersPathToKurbo<I> {
+    iter: I,
+    first: bool,
+}
+
+impl<I> PlottersPathToKurbo<I> {
+    fn new(path: I) -> PlottersPathToKurbo<I> {
+        PlottersPathToKurbo {
+            iter: path,
+            first: true,
+        }
+    }
+}
+
+impl<I> Iterator for PlottersPathToKurbo<I>
+where
+    I: Iterator<Item = BackendCoord>,
+{
+    type Item = kurbo::PathEl;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.iter.next().map(|point| {
+            let point = plotters_point_to_kurbo_mid(point);
+
+            if self.first {
+                self.first = false;
+                kurbo::PathEl::MoveTo(point)
+            } else {
+                kurbo::PathEl::LineTo(point)
+            }
+        })
+    }
+}
+
+fn plotters_path_to_kurbo(
+    path: impl IntoIterator<Item = BackendCoord>,
+) -> impl Iterator<Item = kurbo::PathEl> {
+    PlottersPathToKurbo::new(path.into_iter())
+}
+
 const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle {
     line_join: None,
     line_cap: Some(LineCap::Square),
@@ -258,7 +298,8 @@ const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle {
 
 #[cfg(test)]
 mod tests {
-    use crate::PietBackend;
+    use super::*;
+    use piet_common::RenderContext;
     use plotters::prelude::*;
 
     #[test]
@@ -268,19 +309,42 @@ mod tests {
 
         let mut device = piet_common::Device::new().unwrap();
         let mut bitmap = device.bitmap_target(width, height, 1.0).unwrap();
-        let mut render_ctx = bitmap.render_context();
 
-        let piet_backend = PietBackend {
-            size: (width as u32, height as u32),
-            render_ctx: &mut render_ctx,
-        };
+        {
+            let mut render_ctx = bitmap.render_context();
 
-        let root = piet_backend.into_drawing_area();
-        root.fill(&WHITE).unwrap();
+            let piet_backend = PietBackend {
+                size: (width as u32, height as u32),
+                render_ctx: &mut render_ctx,
+            };
+
+            let root = piet_backend.into_drawing_area();
+            root.fill(&WHITE).unwrap();
+
+            render_ctx.finish().unwrap();
+        }
 
         let mut buf = [0; 6 * 4];
-        bitmap.copy_raw_pixels(piet_common::ImageFormat::RgbaPremul, &mut buf).unwrap();
+        bitmap
+            .copy_raw_pixels(piet_common::ImageFormat::RgbaPremul, &mut buf)
+            .unwrap();
 
         assert_eq!(buf, [255; 6 * 4]);
+    }
+
+    #[test]
+    fn test_plotters_path_to_kurbo() {
+        let path = vec![(1, 2), (3, 4), (5, 6)];
+
+        let kurbo_path: Vec<kurbo::PathEl> = plotters_path_to_kurbo(path).collect();
+
+        assert_eq!(
+            kurbo_path,
+            vec![
+                kurbo::PathEl::MoveTo(kurbo::Point { x: 1.5, y: 2.5 }),
+                kurbo::PathEl::LineTo(kurbo::Point { x: 3.5, y: 4.5 }),
+                kurbo::PathEl::LineTo(kurbo::Point { x: 5.5, y: 6.5 }),
+            ]
+        );
     }
 }
