@@ -1,5 +1,8 @@
 # Plotters Piet
 
+[![crates.io](https://img.shields.io/crates/v/plotters-piet.svg?logo=rust)](https://crates.io/crates/plotters-piet)
+[![docs.rs badge](https://docs.rs/plotters-piet/badge.svg)](https://docs.rs/plotters-piet)
+
 A [Piet](https://crates.io/crates/piet) backend for [Plotters](https://crates.io/crates/plotters). This lets you draw plots on a Piet render context.
 
 Currently the piet dependency is at 0.3 because that's what druid depends on. The code is *almost* compatible with
