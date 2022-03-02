@@ -3,7 +3,7 @@ members = ["plotters-piet"]
 
 [package]
 name = "plotters-druid"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Pascal Sommer"]
 license = "MIT OR Apache-2.0"
@@ -15,5 +15,5 @@ readme = "Readme.md"
 
 [dependencies]
 druid = "0.7.0"
-plotters-piet = {version = "0.3.*", path = "plotters-piet"}
+plotters-piet = {version = "0.3.1", path = "plotters-piet"}
 plotters = "^0.3"
