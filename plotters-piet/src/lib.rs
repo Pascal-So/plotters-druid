@@ -284,17 +284,7 @@ fn plotters_path_to_kurbo(
     PlottersPathToKurbo::new(path.into_iter())
 }
 
-const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle {
-    line_join: None,
-    line_cap: Some(LineCap::Square),
-    dash: None,
-    miter_limit: None,
-};
-
-// TODO: as soon as we can upgrade to piet 0.4 or 0.5 swap
-// the STROKE_STYLE_SQUARE_CAP definition for this, the rest
-// should already be compatible.
-// const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle::new().line_cap(LineCap::Square);
+const STROKE_STYLE_SQUARE_CAP: StrokeStyle = StrokeStyle::new().line_cap(LineCap::Square);
 
 #[cfg(test)]
 mod tests {
