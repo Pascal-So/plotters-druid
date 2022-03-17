@@ -36,7 +36,7 @@ fn build_plot_widget() -> impl Widget<()> {
 }
 
 fn main() {
-    let main_window = WindowDesc::new(build_plot_widget)
+    let main_window = WindowDesc::new(build_plot_widget())
         .title("Hello Plot!")
         .window_size((400.0, 400.0));
 

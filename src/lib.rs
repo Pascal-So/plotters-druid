@@ -36,7 +36,7 @@ fn build_plot_widget() -> impl Widget<AppState> {
 }
 
 # fn main() {
-let main_window = WindowDesc::new(build_plot_widget);
+let main_window = WindowDesc::new(build_plot_widget());
 # }
 ```
 
@@ -76,7 +76,7 @@ use plotters_piet::PietBackend;
 /// }
 ///
 /// # fn main() {
-/// let main_window = WindowDesc::new(build_plot_widget);
+/// let main_window = WindowDesc::new(build_plot_widget());
 /// # }
 /// ```
 pub struct Plot<T: Data> {

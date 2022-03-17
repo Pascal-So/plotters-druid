@@ -86,7 +86,7 @@ fn build_root_widget() -> impl Widget<State> {
 }
 
 fn main() {
-    let main_window = WindowDesc::new(build_root_widget)
+    let main_window = WindowDesc::new(build_root_widget())
         .title("Logit-Normal Distribution")
         .window_size((700.0, 450.0));
 
