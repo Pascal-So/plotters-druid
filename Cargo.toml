@@ -15,6 +15,6 @@ readme = "Readme.md"
 
 [dependencies]
 # Todo: wait for druid to release a version based on piet 0.5 or higher
-druid = { git = "https://github.com/linebender/druid", rev = "0079ae31127b3a309c9b0fc8806d52ff68822dd5" }
+druid = { git = "https://github.com/linebender/druid", rev = "fc05e965c85fced8720c655685e02478e0530e94" }
 plotters-piet = {version = "0.3.1", path = "plotters-piet"}
 plotters = "^0.3"
