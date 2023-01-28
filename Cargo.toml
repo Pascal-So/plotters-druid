@@ -3,18 +3,17 @@ members = ["plotters-piet"]
 
 [package]
 name = "plotters-druid"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Pascal Sommer"]
 license = "MIT OR Apache-2.0"
-description = "Use Plottters as a Druid Widget"
+description = "Use Plotters as a Druid Widget"
 repository = "https://github.com/Pascal-So/plotters-druid"
 keywords = ["visualization", "plotters", "druid", "plot", "widget"]
 categories = ["visualization", "gui"]
 readme = "Readme.md"
 
 [dependencies]
-# Todo: wait for druid to release a version based on piet 0.5 or higher
-druid = { git = "https://github.com/linebender/druid", rev = "0079ae31127b3a309c9b0fc8806d52ff68822dd5" }
-plotters-piet = {version = "0.3.1", path = "plotters-piet"}
+druid = "0.8.2"
+plotters-piet = {version = "0.3.2", path = "plotters-piet"}
 plotters = "^0.3"

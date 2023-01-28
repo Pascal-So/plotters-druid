@@ -12,12 +12,12 @@ readme = "Readme.md"
 # According to Plotters convention the major and minor version of all backends
 # should follow the plotters-backend version.
 # See https://docs.rs/plotters-backend/latest/plotters_backend/#compatibility-note
-version = "0.3.1"
+version = "0.3.2"
 
 [dependencies]
-piet-common = "0.5"
+piet-common = "0.6.1"
 plotters-backend = "^0.3"
 
 [dev-dependencies]
 plotters = "^0.3"
-piet-common = {version = "0.5", features = ["png"]}
+piet-common = {version = "0.6.1", features = ["png"]}
