@@ -24,6 +24,4 @@ jobs:
         if: always()
         with:
           name: images
-          path: |
-            asdf.png
-            plotters-piet/tests/plot.png
+          path: **/*.png
