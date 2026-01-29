@@ -61,9 +61,9 @@ fn snapshot_test() {
     let actual = bitmap_to_image(&mut bitmap);
 
     if expected != actual {
+        actual.save("asdf.png").unwrap();
         // assert_eq would spam the console with the entire list of bytes on fails
         assert!(false, "images differ");
-        actual.save("asdf.png").unwrap();
     }
 }
 

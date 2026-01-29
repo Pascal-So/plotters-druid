@@ -20,6 +20,10 @@ jobs:
         # druid version currently depends on a prerelease version of
         # piet
         #
+        #
+      - run: ls -al
+      - run: ls -al plotters-piet/*
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
