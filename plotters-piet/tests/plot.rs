@@ -63,6 +63,7 @@ fn snapshot_test() {
     if expected != actual {
         // assert_eq would spam the console with the entire list of bytes on fails
         assert!(false, "images differ");
+        actual.save("asdf.png").unwrap();
     }
 }
 
