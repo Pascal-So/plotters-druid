@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.3 (2026-01-30)
+* Bump `piet-common` to 0.7.0-cairo18.
+
+  0.7.0-cairo18 is a pre-release of `piet-common` 0.7.0. Setting the dependency
+  to the pre-release allows users of `plotters-piet` to use both the pre-release
+  and full release of `piet-common` 0.7.0. This is useful because the current
+  `druid` main branch also depends on that pre-release.
+
 ## v0.3.2 (2023-01-28)
 * Bump `piet-common` to 0.6.1 to match `druid` 0.8.2.
 

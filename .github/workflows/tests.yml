@@ -16,8 +16,8 @@ jobs:
 
       - name: Run tests
         run: cargo test --package plotters-piet
-        # For now we skip the plotters-druid tests because the latest druid
-        # version currently depends on a pre-release version of piet.
+        # For now we skip the plotters-druid tests because druid currently
+        # depends on older versions of piet.
 
       - uses: actions/upload-artifact@v4
         if: failure()
