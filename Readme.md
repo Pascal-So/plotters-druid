@@ -27,6 +27,19 @@ In this example we use a value from the druid data to manipulate the plot.
 cargo run --example interactive
 ```
 
+## Version Compatibility Table
+
+There's a lot of [0.x versions](https://0ver.org/) floating around here, so I've
+assembled a table to help you figure out which version of `plotters-druid` or
+`plotters-piet` you need.
+
+| druid | plotters-druid | piet-common | plotters-piet | plotters |
+| --- | --- | -- | -- | -- |
+| 0.7.0 | 0.2.0 | 0.3.2 | 0.3.1 | 0.3 |
+| 0.8.2 / 0.8.3 | 0.3.0 | 0.6.1 / 0.6.2 | 0.3.2 | 0.3 |
+| commit [b27ea6a](https://github.com/linebender/druid/tree/b27ea6a618c32f9ea0e8a56822f9487d23401c0d) | commit [44f35a0](https://github.com/Pascal-So/plotters-druid/tree/44f35a0afe8a0c81b8b592d6eeb23bd56e3e830e) | 0.7.0-cairo18 | 0.3.3 | 0.3 |
+|  | | 0.7.0 | 0.3.3 | 0.3 |
+
 ## License
 
 Licensed under either of

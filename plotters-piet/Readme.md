@@ -9,6 +9,8 @@ Note that so far this has only been tested with piet-cairo and piet-direct2d.
 
 Examples can be found in the [examples directory](https://github.com/Pascal-So/plotters-druid/tree/main/plotters-piet/examples).
 
+For version compatibilities, see the table in the [plotters-druid readme](https://github.com/Pascal-So/plotters-druid/#version-compatibility-table)
+
 ## License
 
 Licensed under either of
