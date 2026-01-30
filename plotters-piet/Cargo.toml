@@ -21,3 +21,4 @@ plotters-backend = "^0.3"
 [dev-dependencies]
 plotters = "^0.3"
 piet-common = {version = "0.6.1", features = ["png"]}
+image = { version = "0.24.9", default-features = false, features = ["png"] }
