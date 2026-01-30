@@ -16,16 +16,11 @@ jobs:
 
       - name: Run tests
         run: cargo test --package plotters-piet
-        # For now we skip the plotters-druid tests because the latest
-        # druid version currently depends on a prerelease version of
-        # piet
-        #
-        #
-      - run: ls -al
-      - run: ls -al plotters-piet/*
+        # For now we skip the plotters-druid tests because the latest druid
+        # version currently depends on a pre-release version of piet.
 
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: images
-          path: ./**/*.png
+          path: ./**/tests/**/*.png
