@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.4 (2026-01-31)
+* Expand `piet-common` dependency to cover the full range `>=0.4, <0.9`. Note
+  that this might not cover pre-releases, therefore you still might have to
+  reach for `plotters-piet` v0.3.3 when you need exactly 0.7.0-cairo18.
+
 ## v0.3.3 (2026-01-30)
 * Bump `piet-common` to 0.7.0-cairo18.
 

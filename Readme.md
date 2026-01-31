@@ -38,7 +38,15 @@ assembled a table to help you figure out which version of `plotters-druid` or
 | 0.7.0 | 0.2.0 | 0.3.2 | 0.3.1 | 0.3 |
 | 0.8.2 / 0.8.3 | 0.3.0 | 0.6.1 / 0.6.2 | 0.3.2 | 0.3 |
 | commit [b27ea6a](https://github.com/linebender/druid/tree/b27ea6a618c32f9ea0e8a56822f9487d23401c0d) | commit [44f35a0](https://github.com/Pascal-So/plotters-druid/tree/44f35a0afe8a0c81b8b592d6eeb23bd56e3e830e) | 0.7.0-cairo18 | 0.3.3 | 0.3 |
-|  | | 0.7.0 | 0.3.3 | 0.3 |
+|  | | >= 0.4, < 0.9 | 0.3.4 | 0.3 |
+
+If you run into problems with multiple versions of `piet` in your dependency
+graph then check out the [dependency duplication](https://doc.rust-lang.org/cargo/reference/resolver.html#unexpected-dependency-duplication)
+section of the Cargo Book. `cargo update` with the [`--precise`](https://doc.rust-lang.org/cargo/commands/cargo-update.html#option-cargo-update---precise)
+flag should usually be able to fix the issue.
+
+See also [this cargo issue](https://github.com/rust-lang/cargo/issues/9029) for
+more information about version ranges.
 
 ## License
 

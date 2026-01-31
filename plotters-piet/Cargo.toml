@@ -12,13 +12,13 @@ readme = "Readme.md"
 # According to Plotters convention the major and minor version of all backends
 # should follow the plotters-backend version.
 # See https://docs.rs/plotters-backend/latest/plotters_backend/#compatibility-note
-version = "0.3.3"
+version = "0.3.4"
 
 [dependencies]
-piet-common = "0.7.0-cairo18"
+piet-common = ">= 0.4, < 0.9"
 plotters-backend = "^0.3"
 
 [dev-dependencies]
 plotters = "^0.3"
-piet-common = {version = "0.7.0-cairo18", features = ["png"]}
-image = { version = "0.25.4", default-features = false, features = ["png"] }
+piet-common = {version = ">= 0.4, < 0.9", features = ["png"]}
+image = { version = ">= 0.24, < 0.26", default-features = false, features = ["png"] }
